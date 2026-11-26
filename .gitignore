@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+.pytest_cache/
+.mypy_cache/
+.idea/
+.vscode/
+*.docx
+*.pdf
+manual_assets/
+manual_render*/

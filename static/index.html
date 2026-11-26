@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PseudoCompiler IDE</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/overrides.css">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark"><i data-lucide="code-2"></i></span><span>PseudoCompiler</span></div>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-item active" data-view="workbench"><i data-lucide="code-2" class="nav-icon"></i>Workbench</button>
+        <button class="nav-item" data-view="tests"><i data-lucide="list-checks" class="nav-icon"></i>Pruebas y validación</button>
+      </nav>
+      <div class="side-divider"></div>
+      <div class="side-section-title">PROGRAMAS DEL ANEXO</div>
+      <div class="program-list" id="programList"></div>
+      <div class="side-divider error-divider"></div>
+      <div class="side-section-title error-section-title">CASOS DE ERROR</div>
+      <div class="error-list" id="errorList"></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Proyecto</span><b>/</b><strong id="breadcrumbName">nuevo_programa.psc</strong></div>
+        <div class="header-source-actions">
+          <button id="createCompilationButton" class="header-action create-header-action"><i data-lucide="plus"></i>Crear nuevo pseudocódigo</button>
+          <button id="uploadButton" class="header-action upload-header-action" aria-describedby="uploadFormatTooltip"><i data-lucide="file-up"></i>Subir pseudocódigo<span id="uploadFormatTooltip" class="upload-tooltip" role="tooltip">Admite archivos .txt y .psc</span></button>
+          <input id="sourceFileInput" type="file" accept=".txt,.psc,text/plain" hidden>
+        </div>
+      </header>
+
+      <section id="workbenchView" class="view active-view">
+        <div class="page-heading">
+          <div><h1>Workbench</h1></div>
+        </div>
+
+        <div class="compile-toolbar">
+          <div id="programChooser" class="toolbar-group"><label for="programSelect">Programa</label><select id="programSelect"></select></div>
+          <div class="toolbar-group target-group"><label for="targetSelect">Lenguaje de destino</label><select id="targetSelect"><option value="python">Python 3</option><option value="javascript">JavaScript (Node)</option></select></div>
+          <div class="toolbar-spacer"></div>
+          <button id="clearButton" class="button secondary"><i data-lucide="eraser"></i>Limpiar</button>
+          <button id="compileButton" class="button primary"><i data-lucide="play"></i>Compilar salida</button>
+        </div>
+
+        <div class="workbench-grid">
+          <section class="panel editor-panel">
+            <div class="panel-header"><div class="panel-title"><i data-lucide="file-code-2" class="file-icon"></i> Código fuente <span class="file-name" id="sourceName">nuevo_programa.psc</span></div><span class="panel-meta" id="sourceFormat">Pseudocódigo - UTF-8</span></div>
+            <div class="editor-wrap"><div class="error-highlights" id="sourceHighlights" aria-hidden="true"></div><div class="line-numbers" id="lineNumbers"></div><textarea id="sourceEditor" spellcheck="false" wrap="off" aria-label="Editor de pseudocódigo"></textarea><div class="editor-drop-hint"><i data-lucide="upload-cloud"></i><strong>Suelta aquí tu pseudocódigo</strong><small>Archivos .txt o .psc</small></div></div>
+            <div class="panel-footer"><span id="cursorInfo">Línea 1, columna 1</span><span>ESPACIOS: 4</span></div>
+          </section>
+
+          <section class="panel output-panel">
+            <div class="panel-header"><div class="panel-title"><i data-lucide="arrow-up-right" class="output-icon"></i> <span id="outputPanelTitle">Salida generada</span> <span class="target-badge" id="targetBadge">PY</span></div><div class="output-actions"><button id="copyButton" class="text-button"><i data-lucide="copy"></i>Copiar código</button><button id="downloadButton" class="download-button" disabled><i data-lucide="download"></i>Descargar .py</button><button id="tryButton" class="try-button" disabled><i data-lucide="terminal-square"></i>Probar</button></div></div>
+            <div id="generatedOutputView">
+              <div class="output-tabs"><button class="output-tab active" data-output="code">Código <span id="codeLineCount">0 líneas</span></button></div>
+              <div id="generatedCode" class="code-output empty-output">Selecciona un lenguaje y presiona <strong>Compilar salida</strong>.</div>
+            </div>
+            <div id="outputDiagnostics" class="output-diagnostics hidden"></div>
+          </section>
+        </div>
+
+        <div class="inspector-grid">
+          <section class="panel inspector-panel ast-panel"><div class="panel-header"><div class="panel-title"><i data-lucide="git-branch"></i>Árbol sintáctico <span class="count-badge" id="astCount">0 nodos</span></div></div><pre id="astOutput" class="tree-output">El AST aparecerá después de compilar.</pre></section>
+          <section class="panel inspector-panel"><div class="panel-header"><div class="panel-title">Tabla de símbolos <span class="count-badge" id="symbolCount">0 símbolos</span></div></div><div class="table-scroll"><table><thead><tr><th>Nombre</th><th>Categoría</th><th>Tipo</th></tr></thead><tbody id="symbolsOutput"><tr><td colspan="3" class="muted-cell">Sin símbolos todavía</td></tr></tbody></table></div></section>
+          <section id="diagnosticsPanel" class="panel inspector-panel diagnostics-panel hidden"><div class="panel-header"><div class="panel-title">Diagnóstico <span class="count-badge" id="errorCount">0 errores</span></div></div><div id="diagnosticsOutput" class="diagnostics-empty"></div></section>
+        </div>
+      </section>
+
+      <section id="testsView" class="view">
+        <div class="page-heading"><div><h1>Pruebas y validación</h1></div><button id="runTestsButton" class="button primary"><i data-lucide="play"></i>Ejecutar pruebas</button></div>
+        <div class="test-summary"><div class="summary-card"><span class="summary-label">CASOS EJECUTADOS</span><strong id="totalTests">—</strong><small>programas A–E</small></div><div class="summary-card success-card"><span class="summary-label">CORRECTOS</span><strong id="passedTests">—</strong><small id="passedPercent">Sin ejecutar</small></div><div class="summary-card warning-card"><span class="summary-label">FALLIDOS</span><strong id="failedTests">—</strong><small>requieren revisión</small></div><div class="summary-card"><span class="summary-label">DESTINO ACTUAL</span><strong id="suiteTarget">PY</strong><small>seleccionado arriba</small></div></div>
+        <section class="panel test-panel"><div class="panel-header"><div class="panel-title">Matriz de validación <span class="count-badge">15 casos</span></div><span id="suiteStatus" class="panel-meta">Lista para ejecutar</span></div><div class="table-scroll"><table class="test-table"><thead><tr><th>Programa</th><th>Caso</th><th>Entrada</th><th>Resultado esperado</th><th>Estado</th><th>Detalle</th></tr></thead><tbody id="testsOutput"><tr><td colspan="6" class="muted-cell">Presiona “Ejecutar pruebas” para validar Python o JavaScript.</td></tr></tbody></table></div></section>
+      </section>
+      <footer class="app-footer"><span>PseudoCompiler IDE</span></footer>
+    </main>
+  </div>
+  <div id="testModal" class="test-modal hidden" role="dialog" aria-modal="true" aria-labelledby="testModalTitle" aria-hidden="true">
+    <div class="test-modal-backdrop" data-close-test-modal></div>
+    <section class="test-modal-card">
+      <header class="test-modal-header">
+        <div><h2 id="testModalTitle">Probar código generado</h2></div>
+        <button id="closeTestModal" class="modal-close" aria-label="Cerrar ventana de pruebas"><i data-lucide="x"></i></button>
+      </header>
+      <div class="test-modal-body">
+        <section class="modal-code-panel">
+          <div class="modal-panel-heading"><div><strong id="testCodeTitle">Código Python</strong><small id="testCodeMeta">Salida generada</small></div><span class="target-badge" id="testTargetBadge">PY</span></div>
+          <pre id="testGeneratedCode" class="modal-code-output"></pre>
+        </section>
+        <section class="modal-console-panel">
+          <div class="modal-panel-heading"><div><strong>Consola de pruebas</strong><small>Escribe una entrada y presiona Enter</small></div><i data-lucide="panel-bottom" class="console-icon"></i></div>
+          <div class="console-output-wrap interactive-console"><div class="console-output-heading"><span>Salida de ejecución</span><span id="testRunStatus" class="console-status">Iniciando</span></div><pre id="testConsoleOutput" class="test-console-output">Iniciando programa…</pre><div id="terminalInputRow" class="terminal-input-row"><span class="terminal-prompt">&gt;</span><input id="testConsoleInput" class="terminal-input" autocomplete="off" spellcheck="false" aria-label="Entrada de consola" placeholder="Escribe aquí y presiona Enter"><button id="sendTestInput" class="terminal-send" aria-label="Enviar entrada"><i data-lucide="corner-down-left"></i></button></div></div>
+        </section>
+      </div>
+    </section>
+  </div>
+  <script src="/app.js?v=4"></script>
+</body>
+</html>
