@@ -23,10 +23,14 @@
       <div class="side-section-title error-section-title">CASOS DE ERROR</div>
       <div class="error-list" id="errorList"></div>
     </aside>
+    <div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop" aria-hidden="true"></div>
 
     <main class="main-content">
       <header class="topbar">
-        <div class="breadcrumb"><span>Proyecto</span><b>/</b><strong id="breadcrumbName">nuevo_programa.psc</strong></div>
+        <div class="topbar-leading">
+          <button id="mobileMenuButton" class="mobile-menu-button" type="button" aria-label="Abrir menú" aria-expanded="false"><i data-lucide="menu"></i></button>
+          <div class="breadcrumb"><span>Proyecto</span><b>/</b><strong id="breadcrumbName">nuevo_programa.psc</strong></div>
+        </div>
         <div class="header-source-actions">
           <button id="createCompilationButton" class="header-action create-header-action"><i data-lucide="plus"></i>Crear nuevo pseudocódigo</button>
           <button id="uploadButton" class="header-action upload-header-action" aria-describedby="uploadFormatTooltip"><i data-lucide="file-up"></i>Subir pseudocódigo<span id="uploadFormatTooltip" class="upload-tooltip" role="tooltip">Admite archivos .txt y .psc</span></button>
@@ -98,6 +102,6 @@
       </div>
     </section>
   </div>
-  <script src="/app.js?v=4"></script>
+  <script src="/app.js?v=5"></script>
 </body>
 </html>

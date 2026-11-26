@@ -91,6 +91,23 @@ function updateLineNumbers() {
 
 function setStatus() {}
 
+function setMobileMenu(open) {
+  document.body.classList.toggle('mobile-menu-open', open);
+  const button = $('mobileMenuButton');
+  const backdrop = $('mobileSidebarBackdrop');
+  if (button) {
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    button.innerHTML = `<i data-lucide="${open ? 'x' : 'menu'}"></i>`;
+  }
+  if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
+  refreshIcons();
+}
+
+function closeMobileSidebar() {
+  setMobileMenu(false);
+}
+
 function displayName(program) { return `programa_${program.toLowerCase()}.psc`; }
 
 function renderPrograms() {
@@ -137,6 +154,7 @@ function renderErrorCases() {
 }
 
 function selectProgram(program) {
+  closeMobileSidebar();
   state.selectedProgram = program;
   state.selectedError = '';
   state.sourceMode = program ? 'example' : 'custom';
@@ -155,6 +173,7 @@ function selectProgram(program) {
 function selectErrorCase(caseKey) {
   const item = state.errorCases[caseKey];
   if (!item) return;
+  closeMobileSidebar();
   state.selectedProgram = '';
   state.selectedError = caseKey;
   state.sourceMode = 'error';
@@ -469,6 +488,7 @@ async function runTests() {
 }
 
 function switchView(view) {
+  closeMobileSidebar();
   document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.view === view));
   $('workbenchView').classList.toggle('active-view', view === 'workbench');
   $('testsView').classList.toggle('active-view', view === 'tests');
@@ -493,7 +513,13 @@ function wireEvents() {
   $('testConsoleInput').onkeydown = (event) => { if (event.key === 'Enter') { event.preventDefault(); submitTestInput(); } };
   $('closeTestModal').onclick = closeTestModal;
   document.querySelector('[data-close-test-modal]').onclick = closeTestModal;
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !$('testModal').classList.contains('hidden')) closeTestModal(); });
+  $('mobileMenuButton').onclick = () => setMobileMenu(!document.body.classList.contains('mobile-menu-open'));
+  $('mobileSidebarBackdrop').onclick = closeMobileSidebar;
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (!$('testModal').classList.contains('hidden')) closeTestModal();
+    else closeMobileSidebar();
+  });
   $('clearButton').onclick = () => selectProgram('');
   $('createCompilationButton').onclick = () => { selectProgram(''); editor.focus(); };
   $('copyButton').onclick = async () => { if (state.result?.generated_code) { await navigator.clipboard.writeText(state.result.generated_code); $('copyButton').innerHTML = '<i data-lucide="check"></i>Copiado'; refreshIcons(); setTimeout(() => { $('copyButton').innerHTML = '<i data-lucide="copy"></i>Copiar código'; refreshIcons(); }, 1200); } };
