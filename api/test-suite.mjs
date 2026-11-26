@@ -42,7 +42,7 @@ async function compileProgram(request, source, name) {
 
 function runGenerated(code, inputs) {
   const folder = mkdtempSync(join(tmpdir(), 'pseudocompiler-suite-'));
-  const file = join(folder, 'salida.mjs');
+  const file = join(folder, 'salida.js');
   writeFileSync(file, code, 'utf8');
   const completed = spawnSync(process.execPath, [file], {
     input: `${inputs.join('\n')}\n`,

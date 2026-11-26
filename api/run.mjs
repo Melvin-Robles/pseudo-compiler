@@ -25,7 +25,7 @@ export async function POST(request) {
   }
 
   const folder = mkdtempSync(join(tmpdir(), 'pseudocompiler-'));
-  const file = join(folder, 'salida.mjs');
+  const file = join(folder, 'salida.js');
   writeFileSync(file, String(payload.code || ''), 'utf8');
   const completed = spawnSync(process.execPath, [file], {
     input: String(payload.input_text || ''),
