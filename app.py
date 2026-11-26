@@ -193,7 +193,13 @@ class AppHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
-        if path not in {"/api/compile", "/api/test-suite", "/api/run"}:
+        if path not in {
+            "/api/compile",
+            "/api/test-suite",
+            "/api/test-suite-python",
+            "/api/run",
+            "/api/run-python",
+        }:
             json_response(self, {"error": "Ruta no encontrada"}, HTTPStatus.NOT_FOUND)
             return
         try:
