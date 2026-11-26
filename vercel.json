@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/api/run",
+      "destination": "/api/run.mjs"
+    },
+    {
+      "source": "/api/test-suite",
+      "destination": "/api/test-suite.mjs"
+    },
+    {
       "source": "/(.*)",
       "destination": "/api/index.py"
     }
@@ -10,6 +18,10 @@
     "api/index.py": {
       "maxDuration": 60,
       "includeFiles": "{app.py,compilador/**,programas/**,static/**}"
+    },
+    "api/test-suite.mjs": {
+      "maxDuration": 60,
+      "includeFiles": "programas/**"
     }
   }
 }

@@ -202,10 +202,10 @@ class AppHandler(BaseHTTPRequestHandler):
             target = str(data.get("target", "python")).lower()
             if target not in {"python", "javascript"}:
                 raise ValueError("Lenguaje no soportado")
-            if path == "/api/test-suite":
+            if path in {"/api/test-suite", "/api/test-suite-python"}:
                 json_response(self, run_test_suite(target))
                 return
-            if path == "/api/run":
+            if path in {"/api/run", "/api/run-python"}:
                 code = str(data.get("code", ""))
                 input_text = str(data.get("input_text", ""))
                 inputs = input_text.splitlines()
