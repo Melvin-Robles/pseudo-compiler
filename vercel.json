@@ -9,12 +9,7 @@
   "functions": {
     "api/index.py": {
       "maxDuration": 60,
-      "includeFiles": [
-        "app.py",
-        "compilador/**",
-        "programas/**",
-        "static/**"
-      ]
+      "includeFiles": "{app.py,compilador/**,programas/**,static/**}"
     }
   }
 }
